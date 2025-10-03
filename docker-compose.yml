@@ -1,0 +1,61 @@
+version: '3.8'
+
+services:
+  # 测试模式 - 一次性运行100只股票
+  futu-news-test:
+    build: .
+    container_name: futu-news-test
+    environment:
+      - TZ=Asia/Shanghai
+      - PYTHONUNBUFFERED=1
+      # 并发参数配置
+      - MAX_WORKERS=30
+      - MAX_CONCURRENT=25
+      - REQUEST_DELAY=0.1
+      # 代理配置
+      - USE_PROXY=true
+      # 输出配置
+      - OUTPUT_DIR=/etc/FUTUNews/output
+    volumes:
+      - /etc/FUTUNews/output:/etc/FUTUNews/output
+    command: ["python", "futu_news_scraper.py", "--mode", "test"]
+    restart: "no"
+    profiles:
+      - test
+
+  # 自动模式 - 每天8点定时运行
+  futu-news-auto:
+    build: .
+    container_name: futu-news-auto
+    environment:
+      - TZ=Asia/Shanghai
+      - PYTHONUNBUFFERED=1
+      # 并发参数配置
+      - MAX_WORKERS=30
+      - MAX_CONCURRENT=25
+      - REQUEST_DELAY=0.1
+      # 代理配置
+      - USE_PROXY=true
+      # 输出配置
+      - OUTPUT_DIR=/etc/FUTUNews/output
+    volumes:
+      - /etc/FUTUNews/output:/etc/FUTUNews/output
+    command: ["python", "futu_news_scraper.py", "--mode", "auto"]
+    restart: unless-stopped
+    profiles:
+      - auto
+
+  # 一次性初始化服务
+  futu-news-init:
+    build: .
+    container_name: futu-news-init
+    environment:
+      - TZ=Asia/Shanghai
+      - PYTHONUNBUFFERED=1
+      - OUTPUT_DIR=/etc/FUTUNews/output
+    volumes:
+      - /etc/FUTUNews/output:/etc/FUTUNews/output
+    command: ["python", "-c", "import os; os.makedirs('/etc/FUTUNews/output', exist_ok=True); print('目录创建完成')"]
+    restart: "no"
+    profiles:
+      - init
