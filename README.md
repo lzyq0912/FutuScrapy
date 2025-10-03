@@ -92,7 +92,7 @@ docker-compose logs -f
 docker-compose --profile auto down
 ```
 
-## 🎯 运行模式详解
+## 🎯 运行模式
 
 ### 测试模式 (test)
 - **用途**: 验证爬虫功能，快速测试
@@ -297,5 +297,3 @@ docker exec -it futu-news-auto nslookup futunn.com
 4. 系统资源使用情况
 
 ---
-
-🎉 **部署完成！爬虫将按设定时间自动运行，持续收集富途新闻数据。**
